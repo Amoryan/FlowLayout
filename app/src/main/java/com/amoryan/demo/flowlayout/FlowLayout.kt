@@ -130,16 +130,17 @@ class FlowLayout : ViewGroup {
         for (i in 0..(mViews.size - 1)) {
             val lineViews = mViews[i]
             var rowLeft = paddingLeft
-            if (lineViews != null) {
-                for (view in lineViews) {
-                    val lp = view.layoutParams as MarginLayoutParams
-                    val left = rowLeft + lp.leftMargin
-                    val top = rowTop + lp.topMargin
-                    view.layout(left, top, left + view.measuredWidth, top + view.measuredHeight)
-                    rowLeft += view.measuredWidth + lp.leftMargin + lp.rightMargin
-                }
-                rowTop += getRowMaxHeight(i)
+
+            if (lineViews == null) continue
+
+            for (view in lineViews) {
+                val lp = view.layoutParams as MarginLayoutParams
+                val left = rowLeft + lp.leftMargin
+                val top = rowTop + lp.topMargin
+                view.layout(left, top, left + view.measuredWidth, top + view.measuredHeight)
+                rowLeft += view.measuredWidth + lp.leftMargin + lp.rightMargin
             }
+            rowTop += getRowMaxHeight(i)
         }
     }
 
