@@ -114,8 +114,8 @@ public final class FlowLayout extends ViewGroup {
                     totalHeight += rowHeight;
                     rowWidth = getPaddingLeft() + getPaddingRight() + childWidth;
                     rowHeight = childHeight;
+                    colIndex = 1;
                 }
-                colIndex = 0;
             } else {
                 colIndex++;
                 rowWidth += childWidth;
