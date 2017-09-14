@@ -16,16 +16,16 @@ import java.util.Map;
  * @description: 流式布局
  * @createTime: 2017/9/14 下午2:32
  */
-public final class FlowLayout extends ViewGroup {
+public final class FlowLayout_JAVA extends ViewGroup {
 
     private Map<Integer, List<View>> mViews;
 
-    public FlowLayout(Context context) {
+    public FlowLayout_JAVA(Context context) {
         super(context);
         initView();
     }
 
-    public FlowLayout(Context context, AttributeSet attrs) {
+    public FlowLayout_JAVA(Context context, AttributeSet attrs) {
         super(context, attrs);
         initView();
     }
@@ -73,7 +73,6 @@ public final class FlowLayout extends ViewGroup {
             int widthUsed = getPaddingLeft() + getPaddingRight() + lp.leftMargin + lp.rightMargin;
             int heightUsed = getPaddingTop() + getPaddingBottom() + lp.topMargin + lp.bottomMargin;
 
-//            measureChild(child, widthMeasureSpec, heightMeasureSpec);
             measureChildWithMargins(child, widthMeasureSpec, widthUsed, heightMeasureSpec, heightUsed);
         }
     }
