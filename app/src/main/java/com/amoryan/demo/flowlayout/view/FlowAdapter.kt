@@ -1,4 +1,4 @@
-package com.amoryan.demo.flowlayout
+package com.amoryan.demo.flowlayout.view
 
 /**
  * @author: Domino

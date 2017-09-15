@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.amoryan.demo.flowlayout.FlowLayout
+<com.amoryan.demo.flowlayout.view.FlowLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="5dp"
+    app:horizontalSpace="10dp"
+    app:verticalSpace="10dp"
     tools:context="com.amoryan.demo.flowlayout.MainActivity">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
         android:background="@drawable/oval_shape"
         android:paddingBottom="5dp"
         android:paddingLeft="10dp"
@@ -23,7 +24,6 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
         android:background="@drawable/oval_shape"
         android:paddingBottom="5dp"
         android:paddingLeft="10dp"
@@ -36,7 +36,6 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
         android:background="@drawable/oval_shape"
         android:paddingBottom="5dp"
         android:paddingLeft="10dp"
@@ -49,7 +48,6 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
         android:background="@drawable/oval_shape"
         android:paddingBottom="5dp"
         android:paddingLeft="10dp"
@@ -62,7 +60,6 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
         android:background="@drawable/oval_shape"
         android:paddingBottom="5dp"
         android:paddingLeft="10dp"
@@ -75,7 +72,6 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
         android:background="@drawable/oval_shape"
         android:paddingBottom="5dp"
         android:paddingLeft="10dp"
@@ -85,4 +81,4 @@
         android:textColor="#1b8fe6"
         android:textSize="12dp"/>
 
-</com.amoryan.demo.flowlayout.FlowLayout>
+</com.amoryan.demo.flowlayout.view.FlowLayout>

@@ -1,9 +1,10 @@
-package com.amoryan.demo.flowlayout
+package com.amoryan.demo.flowlayout.view
 
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
+import com.amoryan.demo.flowlayout.R
 
 /**
  * @author: Domino
@@ -15,7 +16,10 @@ class FlowLayout : ViewGroup {
 
     private lateinit var mContext: Context
 
-    private var mViews = HashMap<Int, ArrayList<View>>()
+    private var mHorizontalSpace: Float = 0f
+    private var mVerticalSpace: Float = 0f
+
+    private var mViews = ArrayList<ArrayList<View>>()
 
     constructor(context: Context) : super(context) {
         initView(context, null)
@@ -27,6 +31,10 @@ class FlowLayout : ViewGroup {
 
     private fun initView(context: Context, attributeSet: AttributeSet?) {
         mContext = context
+
+        var attrs = mContext.obtainStyledAttributes(attributeSet, R.styleable.FlowLayout)
+        mHorizontalSpace = attrs.getDimension(R.styleable.FlowLayout_horizontalSpace, 0f)
+        mVerticalSpace = attrs.getDimension(R.styleable.FlowLayout_verticalSpace, 0f)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -80,6 +88,8 @@ class FlowLayout : ViewGroup {
 
             totalWidth += child.measuredWidth + lp.leftMargin + lp.rightMargin
         }
+        /*horizontal方向的间距为控件个数-1*/
+        totalWidth += mHorizontalSpace.toInt() * (childCount - 1)
         return totalWidth
     }
 
@@ -87,6 +97,7 @@ class FlowLayout : ViewGroup {
 
         var totalHeight = paddingTop + paddingBottom
         var colIndex = 0
+        var rowIndex = 0
         var rowWidth = paddingLeft + paddingRight
         var rowHeight = 0
 
@@ -99,21 +110,40 @@ class FlowLayout : ViewGroup {
             val childWidth = child.measuredWidth + lp.leftMargin + lp.rightMargin
             val childHeight = child.measuredHeight + lp.topMargin + lp.bottomMargin
 
-            if (rowWidth + childWidth > maxWidth) {
-                if (colIndex == 0) {
+            if (colIndex == 0) {
+                if (rowWidth + childWidth > maxWidth) {
                     totalHeight += childHeight
+                    if (rowIndex != 0) {
+                        totalHeight += mVerticalSpace.toInt()
+                    }
                     rowWidth = paddingLeft + paddingRight
                     rowHeight = 0
+                    rowIndex++
                 } else {
-                    totalHeight += rowHeight
-                    rowWidth = paddingLeft + paddingRight + childWidth
-                    rowHeight = childHeight
-                    colIndex = 1
+                    colIndex++
+                    rowWidth += childWidth
+                    if (rowIndex == 0) {
+                        rowHeight = Math.max(rowHeight, childHeight)
+                    } else {
+                        rowHeight = Math.max(rowHeight, childHeight + mVerticalSpace.toInt())
+                    }
                 }
             } else {
-                colIndex++
-                rowWidth += childWidth
-                rowHeight = Math.max(rowHeight, childHeight)
+                if (rowWidth + childWidth + mHorizontalSpace.toInt() > maxWidth) {
+                    totalHeight += rowHeight
+                    rowWidth = paddingLeft + paddingRight + childWidth
+                    rowHeight = childHeight + mVerticalSpace.toInt()
+                    colIndex = 1
+                    rowIndex++
+                } else {
+                    colIndex++
+                    rowWidth += childWidth + mHorizontalSpace.toInt()
+                    if (rowIndex == 0) {
+                        rowHeight = Math.max(rowHeight, childHeight)
+                    } else {
+                        rowHeight = Math.max(rowHeight, childHeight + mVerticalSpace.toInt())
+                    }
+                }
             }
         }
         totalHeight += rowHeight
@@ -131,21 +161,25 @@ class FlowLayout : ViewGroup {
             val lineViews = mViews[i]
             var rowLeft = paddingLeft
 
-            if (lineViews == null) continue
-
-            for (view in lineViews) {
+            for (i in 0..(lineViews.size - 1)) {
+                val view = lineViews[i]
                 val lp = view.layoutParams as MarginLayoutParams
-                val left = rowLeft + lp.leftMargin
+
+                var left = rowLeft + lp.leftMargin
                 val top = rowTop + lp.topMargin
+                var space = view.measuredWidth + lp.leftMargin + lp.rightMargin
+                if (i != 0) {/*不是第一个控件就加上间距*/
+                    left += mHorizontalSpace.toInt()
+                    space += mHorizontalSpace.toInt()
+                }
                 view.layout(left, top, left + view.measuredWidth, top + view.measuredHeight)
-                rowLeft += view.measuredWidth + lp.leftMargin + lp.rightMargin
+                rowLeft += space
             }
             rowTop += getRowMaxHeight(i)
         }
     }
 
     private fun layoutChild() {
-        var rowIndex = 0
         var lineViews = ArrayList<View>()
         var colIndex = 0
         var rowWidth = paddingLeft + paddingRight
@@ -158,37 +192,43 @@ class FlowLayout : ViewGroup {
 
             val childWidth = child.measuredWidth + lp.leftMargin + lp.rightMargin
 
-            if (rowWidth + childWidth > measuredWidth) {
-                if (colIndex == 0) {
+            if (colIndex == 0) {/*这一行的第一个控件是不用添加间距的*/
+                if (rowWidth + childWidth > measuredWidth) {
                     lineViews.add(child)
-                    mViews.put(rowIndex, lineViews)
+                    mViews.add(lineViews)
                     lineViews = ArrayList<View>()
                     rowWidth = paddingLeft + paddingRight
                 } else {
-                    mViews.put(rowIndex, lineViews)
+                    colIndex++
+                    rowWidth += childWidth
+                    lineViews.add(child)
+                }
+            } else {/*一行的非第一个控件需要添加间距*/
+                if (rowWidth + childWidth + mHorizontalSpace > measuredWidth) {
+                    mViews.add(lineViews)
                     lineViews = ArrayList<View>()
                     lineViews.add(child)
                     rowWidth = paddingLeft + paddingRight + childWidth
                     colIndex = 1
+                } else {
+                    colIndex++
+                    rowWidth += childWidth + mHorizontalSpace.toInt()
+                    lineViews.add(child)
                 }
-                rowIndex++
-            } else {
-                colIndex++
-                rowWidth += childWidth
-                lineViews.add(child)
             }
         }
-        mViews.put(rowIndex, lineViews)
+        mViews.add(lineViews)
     }
 
     private fun getRowMaxHeight(rowIndex: Int): Int {
         val views = mViews[rowIndex]
         var maxHeight = 0
-        if (views != null) {
-            for (view in views) {
-                val lp = view.layoutParams as MarginLayoutParams
-                maxHeight = Math.max(maxHeight, view.measuredHeight + lp.topMargin + lp.bottomMargin)
-            }
+        for (view in views) {
+            val lp = view.layoutParams as MarginLayoutParams
+            maxHeight = Math.max(maxHeight, view.measuredHeight + lp.topMargin + lp.bottomMargin)
+        }
+        if (rowIndex < mViews.size) {
+            maxHeight += mVerticalSpace.toInt()
         }
         return maxHeight
     }
