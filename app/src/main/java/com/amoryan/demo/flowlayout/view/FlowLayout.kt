@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
+import android.widget.BaseAdapter
 import com.amoryan.demo.flowlayout.R
 
 /**
@@ -21,6 +22,8 @@ class FlowLayout : ViewGroup {
 
     private var mViews = ArrayList<ArrayList<View>>()
 
+    private lateinit var mAdapter: BaseAdapter
+
     constructor(context: Context) : super(context) {
         initView(context, null)
     }
@@ -35,6 +38,10 @@ class FlowLayout : ViewGroup {
         var attrs = mContext.obtainStyledAttributes(attributeSet, R.styleable.FlowLayout)
         mHorizontalSpace = attrs.getDimension(R.styleable.FlowLayout_horizontalSpace, 0f)
         mVerticalSpace = attrs.getDimension(R.styleable.FlowLayout_verticalSpace, 0f)
+    }
+
+    fun setAdapter(adapter: BaseAdapter) {
+        mAdapter = adapter
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
