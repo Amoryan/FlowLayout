@@ -67,14 +67,10 @@ class FlowLayout : ViewGroup {
     private fun measureChildBeforeLayout(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         for (i in 0..(childCount - 1)) {
             var child = getChildAt(i)
-            var lp = child.layoutParams as MarginLayoutParams
 
             if (View.GONE == child.visibility) continue
 
-            var widthUsed = paddingLeft + paddingRight + lp.leftMargin + lp.rightMargin
-            var heightUsed = paddingTop + paddingBottom + lp.topMargin + lp.bottomMargin
-
-            measureChildWithMargins(child, widthMeasureSpec, widthUsed, heightMeasureSpec, heightUsed)
+            measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0)
         }
     }
 
